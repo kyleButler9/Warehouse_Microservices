@@ -1,0 +1,1 @@
+powershell -ExecutionPolicy Bypass -File \\server\Programs\ks\snpk.ps1

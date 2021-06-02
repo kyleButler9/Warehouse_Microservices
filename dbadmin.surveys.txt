@@ -1,0 +1,11 @@
+Collection of common queries.
+
+This query will get all forms submitted for the day 2021-05-28. Just change the date! 
+note:
+LEFT OUTER JOIN-ing two tables results in the main table, designated after the FROM keyword, having all its rows considered in the query. The secondary table LEFT OUTER JOIN-ed, designated to the right of the JOIN keyword, only extends the rows with values where its key is present in the main table. Additionally, the second table's rows that do not have a key in the main table will not have their values considered in the query.
+
+INNER JOIN-ing two tables only considers rows of the tables that have references to each other. For example: if the harddrives table was inner joined to the donated goods table instead of left outer joined as below, then only the rows from the donated goods table that have a key to a row in the harddrive table will be considered in the query.
+
+"""
+	select d.lotnumber,pc.pid,pc.sn,hd.hdpid,hd.hdsn,dg.assettag from beta.donatedgoods dg left outer join 	beta.computers pc using (pc_id) left outer join beta.harddrives hd using (hd_id) inner join beta.donations 	d using (donation_id) where date_trunc('day',intakedate) = cast('2021-05-28' as timestamp);
+"""

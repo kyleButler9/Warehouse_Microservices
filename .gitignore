@@ -1,0 +1,13 @@
+token.pickle
+database.ini
+/build
+/__pycache__
+/output
+helperAppendage.exe
+helperAppendage.spec
+/dist
+credentials.json
+hello.c
+report.csv
+out.prn
+*.spec

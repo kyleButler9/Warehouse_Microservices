@@ -1,0 +1,78 @@
+These commands are necessary database administration commands to be done
+On staff intake and exit. First, navigate to your postgresql install location, then run the batch file. Optionally, rename your batch file and add this directory to your path (via environmental variables).
+
+
+C:\Program Files\PostgreSQL\13\scripts>dir
+ Volume in drive C is Windows
+ Volume Serial Number is DE3B-ABEF
+
+ Directory of C:\Program Files\PostgreSQL\13\scripts
+
+01/23/2021  10:52 AM    <DIR>          .
+01/23/2021  10:52 AM    <DIR>          ..
+01/22/2021  10:11 PM    <DIR>          images
+01/22/2021  10:11 PM               750 psql.bat
+01/22/2021  10:11 PM             2,562 serverctl.vbs
+               2 File(s)          3,312 bytes
+               3 Dir(s)  369,345,855,488 bytes free
+
+C:\Program Files\PostgreSQL\13\scripts>psql.bat
+Server [localhost]:
+Database [postgres]: launcher
+Port [7245]:
+Username [postgres]:
+Password for user postgres:
+psql (13.1)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+launcher=# \dt beta.
+               List of relations
+ Schema |        Name        | Type  |  Owner
+--------+--------------------+-------+----------
+ beta   | computers          | table | postgres
+ beta   | devicetypes        | table | postgres
+ beta   | distributeddevices | table | postgres
+ beta   | donatedgoods       | table | postgres
+ beta   | donations          | table | postgres
+ beta   | donors             | table | postgres
+ beta   | harddrives         | table | postgres
+ beta   | internet           | table | postgres
+ beta   | licenses           | table | postgres
+ beta   | missingparts       | table | postgres
+ beta   | pallets            | table | postgres
+ beta   | qualities          | table | postgres
+ beta   | qualitycontrol     | table | postgres
+ beta   | recipients         | table | postgres
+ beta   | refurbisheddevices | table | postgres
+ beta   | staff              | table | postgres
+
+launcher=# select * From beta.staff;
+ staff_id |    name     | password | active | nameabbrev
+----------+-------------+----------+--------+------------
+        1 | Kyle Butler |          | t      | kbutler
+        2 | ml          | ml       | t      | mlevis
+(2 rows)
+
+launcher=# insert into beta.staff (name,password,active,nameabbrev)
+launcher-# values ('rp','rp',TRUE,'rprice');
+INSERT 0 1
+launcher=# select * from beta.staff;
+ staff_id |    name     | password | active | nameabbrev
+----------+-------------+----------+--------+------------
+        1 | Kyle Butler |          | t      | kbutler
+        2 | ml          | ml       | t      | mlevis
+        3 | rp          | rp       | t      | rprice
+(3 rows)
+
+launcher=# update beta.staff set active = FALSE where nameabbrev = 'kbutler';
+UPDATE 1
+launcher=# select * from beta.staff;
+ staff_id |    name     | password | active | nameabbrev
+----------+-------------+----------+--------+------------
+        2 | ml          | ml       | t      | mlevis
+        3 | rp          | rp       | t      | rprice
+        1 | Kyle Butler |          | f      | kbutler
+(3 rows)

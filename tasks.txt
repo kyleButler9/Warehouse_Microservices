@@ -1,0 +1,19 @@
+1) Add mechanism to review submissions at extraction station to include:
+  a) means of querying last submission info for update
+  b) means of retrieving form submitted for any individual entry
+    i) note that for multiple hard drives, will need an iterator feature
+    ii) will enable updating entry
+    iii) build triggers to record origional information before update
+2) develop and impliment trigger on harddrives table to log updating of wiped/destoyed status
+  of hard drive that has already been logged as wiped or destroyed to include:
+    a) time of update,
+    b) updating staff
+    c) origional values (wiped, destoyed, timestamp of origional submission)
+3) change submit hotkey from 'ctrl + x' -> 'ctrl + space' or something else
+
+4) address case of hd submission then subsequent assoc. device submission
+	try: on conflict do nothing in "with" HD submission
+
+5 add ability to add donation to edit donor association
+
+6) add ability to pre-allocate pc ids to donations 
