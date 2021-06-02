@@ -6,6 +6,7 @@ import tkinter as tk
 from config import DBI
 import psycopg2
 import socket
+# dev: append functionality to donation banner after port forwarding enabled.
 class GetPrinterName(tk.Frame,DBI):
     def __init__(self,parent,*args,**kwargs):
         tk.Frame.__init__(self,parent,*args)

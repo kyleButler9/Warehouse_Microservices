@@ -54,7 +54,7 @@ class DBI:
                     print('failed conn or search_path setting to ',SCHEMA,try_count,'times.'
                     print('No more attempts... check cable.')
             else:
-                print(self.cur.fetchone(), '<< result from search path setting to',SCHEMA)
+                print('Connected. Search_path set to',SCHEMA)
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
             self.conn = None
@@ -64,6 +64,7 @@ class DBI:
         print('\nretrying connection...')
         self.connectToDB(self.ini_section)
     def insertToDB(self,sql,*args):
+        # includes a commit in body.
         try:
             cur = self.conn.cursor()
             if len(args) != 0:
@@ -98,6 +99,7 @@ class DBI:
             return out
     def fetchone(self,sql,*args):
         #returns one tuple
+        # does not commit
         try:
             if self.testConnection() == 0:
                 self.restartConnection(self.ini_section)
@@ -113,6 +115,7 @@ class DBI:
 
     def fetchall(self,sql,*args):
         #returns a list of tuples
+        # does not commit
         if self.testConnection() == 0:
             self.restartConnection(self.ini_section)
         if len(args) != 0:

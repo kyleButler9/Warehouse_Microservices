@@ -168,23 +168,3 @@ if __name__ == "__main__":
     app = BarcodeScannerMode(root,0,Entry_Vals_Main)
     #this just runs the GUI. And we're off!
     app.mainloop()
-# class DD_Form(tk.Frame):
-#     def __init__(self,parent,ROW,Entry_Vals,*args,**kwargs):
-#         self.parent=parent
-#         tk.Frame.__init__(self,parent,Entry_Vals,*args)
-#         # note that we're ignoring the pks list with the [:-1] below
-#         #      that we're using the Entry_Vals object to determine the fields in the Entry Form
-#         self.Entry_Vals_Fields = fields(Entry_Vals)# [:-1]
-#         self.EV_field_names = [Entry_Vals_Field.name for Entry_Vals_Field in self.Entry_Vals_Fields]
-#         self.row_count=len(self.EV_field_names)
-#         for key in self.EV_field_names:
-#             string_var=None
-#             string_var=tk.StringVar(parent)
-#             setattr(self,key,string_var)
-#         self._grid(ROW,switch)
-#     def get_rowcount(self):
-#         return self.row_count
-#     def get_entry_fields(self):
-#         return self.Entry_Vals_Fields
-#     def get_entryfield_names(self):
-#         return self.EV_field_names

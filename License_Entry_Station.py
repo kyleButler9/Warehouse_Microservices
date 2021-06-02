@@ -4,6 +4,8 @@ from tkinter import TOP,LEFT,BOTTOM,RIGHT
 from dataclasses import dataclass
 import psycopg2
 
+# The comments here are verbose for a simple database interface
+
 class PK_Entries(tk.Frame):
     #this object is the product key
     def __init__(self,parent,*args,**kwargs):
@@ -56,7 +58,7 @@ class PK_Entries(tk.Frame):
                 getattr(self,'microsoftPK'+str(i)).delete(0,'end')
         return self
     def get(self,punctuation):
-        #Ok this next line of code is very pythonic,
+        #This next line of code is advanced,
         #and an equivalent functionality could be done over more lines of code that would do the same but more expressively
         #and thus more easily understood, but this is a good way, a pythonic way, of doing this! Ok lets break it down...
         #what this line does is take the values input into each entry of the Product Key

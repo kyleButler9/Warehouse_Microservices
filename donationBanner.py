@@ -3,9 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkcalendar import Calendar
 import datetime
-from google_sheets import *
-
-#from demoWriteSheet import *
+from Google_Sheets_Interface import *
 
 class DonationBanner(tk.Frame):
     def __init__(self,parent,*args,**kwargs):
@@ -164,24 +162,29 @@ class SelectDonation(tk.Frame,DBI):
             self.donationInfoDD['menu'].add_command(label=dinfoStr,
                 command=tk._setit(self.donorInfoVar,dinfoStr))
     def newGS(self,event):
-        var = self.donorInfoVar.get().split(',')
-        get_lot_info = \
-        """
-        SELECT d.name,l.lotnumber
-        FROM beta.donors d
-        INNER JOIN beta.donations l USING (donor_id)
-        WHERE donation_id = %s;
-        """
-        lot_info = self.fetchone(get_lot_info,self.donationIDVar.get())
-        self.sheet_id.set(create_Sanitization_Sheet(str(lot_info[1]) + ' - '+str(lot_info[0])+' - Data Sanitization & QC Log'))
-        self.updateSheetID()
-        self.google_sheets=UpdateSheets(self,
-                            donation_id=self.donationIDVar.get(),
-                            ini_section=self.ini_section)
-        self.google_sheets.donation_id=self.donationIDVar.get()
-        self.google_sheets.overWrite_sanitization(sheet_id=self.sheet_id.get())
-        print(f'Active Sheet: \n\n\t\t https://docs.google.com/spreadsheets/d/{self.sheet_id.get()}')
-    def updateBanner(self,event):
+        try:
+            self.get_donation_info()
+            get_lot_info = \
+            """
+            SELECT d.name,l.lotnumber
+            FROM beta.donors d
+            INNER JOIN beta.donations l USING (donor_id)
+            WHERE donation_id = %s;
+            """
+            lot_info = self.fetchone(get_lot_info,self.donationIDVar.get())
+            self.sheet_id.set(create_Sanitization_Sheet(str(lot_info[1]) + ' - '+str(lot_info[0])+' - Data Sanitization & QC Log'))
+            self.updateSheetID()
+            self.google_sheets=UpdateSheets(self,
+                                donation_id=self.donationIDVar.get(),
+                                ini_section=self.ini_section)
+            self.google_sheets.donation_id=self.donationIDVar.get()
+            self.google_sheets.overWrite_sanitization(sheet_id=self.sheet_id.get())
+            print(f'Active Sheet: \n\n\t\t https://docs.google.com/spreadsheets/d/{self.sheet_id.get()}')
+        except:
+            print('unable to create new sheet and overwrite with designated donation')
+        finally:
+            return self
+    def get_donation_info(self):
         var = self.donorInfoVar.get().split(',')
         self.companyNameVar.set("Donor Name: "+var[0])
         self.dateReceivedVar.set("Date Media Received: "+var[1])
@@ -198,7 +201,10 @@ class SelectDonation(tk.Frame,DBI):
         """
         ids = self.fetchone(getDonationID,*var)
         self.donationIDVar.set(ids[0])
-        sheet_id = ids[1]
+        return ids
+    def updateBanner(self,event):
+        set_banner = self.get_donation_info()
+        sheet_id = set_banner[1]
         if sheet_id:
             self.sheet_id.set(sheet_id)
         else:
@@ -384,111 +390,5 @@ class NewDonation(tk.Frame,DBI):
         write_to_sheet(sheetID,report)
         self.sheet_id.set(sheetID)
         self.status.set(out+statusAppendage)
-#from demoWriteSheet import *
-# class GenerateReport(tk.Frame,DBI):
-#     def __init__(self,parent,*args,**kwargs):
-#         tk.Frame.__init__(self,parent,*args)
-#         DBI.__init__(self,ini_section = kwargs['ini_section'])
-#         self.donationID = kwargs['donationID']
-#         # if 'sheetID' not in kwargs:
-#         #     self.sheetIDLabel = tk.Label(parent,text='Google Sheet ID:').grid(column=0,row=0)
-#         #     self.sheetID = tk.Entry(parent,fg='black',bg='white',width=40)
-#         #     self.sheetID.grid(column=1,row=0)
-#         self.getReportButton = tk.Button(parent,
-#             text='Generate New Report',
-#             width = 15,
-#             height = 2,
-#             bg = "blue",
-#             fg = "yellow",
-#         )
-#         self.getReportButton.bind('<Button-1>',self.writeSheet)
-#         self.getReportButton.grid(column=1,row=2)
-#         self.err=tk.StringVar(parent)
-#         tk.Label(parent,textvariable=self.err).grid(column=1,row=3)
-#     def writeSheet(self,event):
-#         self.err.set('google functionality restricted because compiled into .exe')
-        # donationID = self.donationID.get()
-        # donationInfo=self.fetchone(Report.donationInfo,donationID)
-        # report = [
-        #     ['Company Name: {}'.format(donationInfo[0])],
-        #     ['Date Received: {} '.format(donationInfo[1].strftime('%m/%d/%Y'))],
-        #     ['Lot Number: {}'.format(donationInfo[2])],
-        #     ['']
-        # ]
-        # cols = 'Drive	Item Type	Item Serial	HD Serial Number	Asset Tag	Destroyed	Data Sanitized	Staff	Entry Date'
-        # report.append(cols.split('	'))
-        # devices = self.fetchall(Report.deviceInfo,donationID)
-        # drive = [1]
-        # for device in devices:
-        #     dlist = list(device)
-        #     try:
-        #         dlist[-1] = dlist[-1].strftime("%m/%d/%Y %H:%M")
-        #     except:
-        #         pass
-        #     finally:
-        #         report.append(drive + dlist)
-        #         drive[0]+=1
-        # sid = self.sheetID.get()
-        # import csv
-        # with open('report.csv', 'w', newline='') as f:
-        #     writer = csv.writer(f)
-        #     writer.writerows(report)
-        # write_to_sheet(sid,report)
-# class ProcessedHardDrives(GenerateReport):
-#     def __init__(self,parent,*args,**kwargs):
-#         #tk.Frame.__init__(self,parent,*args)
-#         GenerateReport.__init__(self,parent,
-#             ini_section = kwargs['ini_section'],
-#             donationID = kwargs['donationID'],
-#             sheetID = kwargs['sheetID'])
-#         self.sheetID = kwargs['sheetID']
-#         #DBI.__init__(self,ini_section = kwargs['ini_section'])
-#         self.hdLabel = tk.Label(parent,text="Hard Drive Serial:")
-#         self.hd = tk.Entry(parent,fg='black',bg='white',width=15)
-#         self.wiperProduct = tk.StringVar(parent,value="Wiped?")
-#         self.wiperProductMenu = tk.OptionMenu(parent,self.wiperProduct,
-#                                             "Wiped.","Destroyed.")
-#         self.finishHDButton = tk.Button(parent,
-#             text='submit',
-#             width = 15,
-#             height = 2,
-#             bg = "blue",
-#             fg = "yellow",
-#         )
-#         self.finishHDButton.bind('<Button-1>',self.finishHD)
-#         self.updateSheetButton = tk.Button(parent,
-#             text='update Sheet',
-#             width = 15,
-#             height = 2,
-#             bg = "blue",
-#             fg = "yellow",
-#         )
-#         self.updateSheetButton.bind('<Button-1>',self.writeSheet)
-#         self.err = tk.StringVar()
-#         self.errorFlag = tk.Label(parent,textvariable=self.err)
-#         self.hdLabel.grid(row=0,column=0)
-#         self.hd.grid(row=0,column=1)
-#         self.wiperProductMenu.grid(row=1,column=1)
-#         self.errorFlag.grid(row=2,column=0)
-#         self.finishHDButton.grid(row=2,column=1)
-#         self.updateSheetButton.grid(row=3,column=1)
-#     def finishHD(self,event):
-#         now = datetime.datetime.now()
-#         wiped = self.wiperProduct.get()
-#         hd = self.hd.get()
-#         if wiped == "Wiped.":
-#             sql = DeviceInfo.noteWipedHD
-#         elif wiped == "Destroyed.":
-#             sql = DeviceInfo.noteDestroyedHD
-#         try:
-#             self.cur.execute(sql,(now,hd,))
-#             self.conn.commit()
-#             if len(self.cur.fetchall()) == 0:
-#                 self.err.set('Error! Error! provided HD SN '+hd +' isn\'t in system!')
-#             else:
-#                 self.err.set('success!')
-#             self.hd.delete(0,'end')
-#         except (Exception, psycopg2.DatabaseError) as error:
-#             self.err.set(error)
-#         finally:
-#             pass
+if __name__ == "__main__":
+    print('no debug configured for this script.',__file__)
